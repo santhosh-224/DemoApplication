@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class Book {
@@ -11,7 +13,11 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @NotBlank(message = "Title is required")
+    @Size(min = 2, message = "Title should have at least 2 characters")
     private String title;
+
+    @NotBlank(message = "Author is required")
     private String author;
 
     public String getAuthor() {

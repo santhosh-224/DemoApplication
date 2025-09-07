@@ -3,7 +3,9 @@ package com.example.demo.controller;
 import com.example.demo.entity.Book;
 import com.example.demo.repository.BookRepository;
 import com.example.demo.service.BookService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,8 +19,8 @@ public class BookController {
 
     //CREATE
     @PostMapping
-    public Book addBook(@RequestBody Book book) {
-        return bookRepository.save(book);
+    public ResponseEntity<Book> addBook(@Valid @RequestBody Book book) {
+        return ResponseEntity.ok(bookRepository.save(book));
     }
 
     //READ ALL
