@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Book;
-import com.example.demo.repository.BookRepository;
 import com.example.demo.service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,40 +13,55 @@ import java.util.List;
 @RequestMapping("/books")
 public class BookController {
 
+    private final BookService bookService;
+
     @Autowired
-    private BookRepository bookRepository;
+    public BookController (BookService bookService) {
+        this.bookService = bookService;
+    }
 
     //CREATE
     @PostMapping
     public ResponseEntity<Book> addBook(@Valid @RequestBody Book book) {
-        return ResponseEntity.ok(bookRepository.save(book));
+        return bookService.addBook(book);
     }
 
     //READ ALL
     @GetMapping
     public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+        return bookService.getAllBooks();
     }
 
     //READ ONE
     @GetMapping("/{id}")
     public Book getBookById(@PathVariable int id) {
-        return bookRepository.findById(id).orElse(null);
+        return bookService.getBookById(id);
     }
 
     //UPDATE
     @PutMapping("/{id}")
     public Book updateBookById(@PathVariable int id, @RequestBody Book bookDetails) {
-        Book book = bookRepository.findById(id).orElseThrow();
-        book.setTitle(bookDetails.getTitle());
-        book.setAuthor(bookDetails.getAuthor());
-        return bookRepository.save(book);
+        return bookService.updateBookById(id, bookDetails);
     }
 
     //DELETE
     @DeleteMapping("/{id}")
     public String deleteBook(@PathVariable int id) {
-        bookRepository.deleteById(id);
-        return "Book deleted successfully!";
+        return bookService.deleteBookById(id);
+    }
+
+    @GetMapping("/author/{author}")
+    public List<Book> getBooksByAuthor(@PathVariable String author){
+        return bookService.getBooksByAuthor(author);
+    }
+
+    @GetMapping("/title-length/{len}")
+    public List<Book> getBooksByTitleLength(@PathVariable int len){
+        return bookService.getBooksByTitleLength(len);
+    }
+
+    @GetMapping("/count/{author}")
+    public long countBooksByAuthor(@PathVariable String author){
+        return bookService.countBooksByAuthor(author);
     }
 }
