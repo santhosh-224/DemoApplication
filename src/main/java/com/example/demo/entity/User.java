@@ -13,7 +13,13 @@ public class User {
     private Long id;
 
     private String name;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
+    private String password;
+
+    private String roles;
 
     // One user can have many books
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -50,5 +56,21 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

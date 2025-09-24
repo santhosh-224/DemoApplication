@@ -28,10 +28,10 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public UserDTO saveUser(User user) {
-        User savedUser = userRepository.save(user);
-        return modelMapper.map(savedUser, UserDTO.class);   //entity -> dto
-
+    public UserDTO saveUser(UserDTO userDTO) {
+        User userEntity = modelMapper.map(userDTO, User.class);
+        User savedUser = userRepository.save(userEntity);
+        return modelMapper.map(savedUser, UserDTO.class);
     }
 
     public UserDTO saveUserWithBooks(UserRequest request) {

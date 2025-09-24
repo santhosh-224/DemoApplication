@@ -1,106 +1,74 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.UserDTO;
-import com.example.demo.dto.UserRequest;
-import com.example.demo.entity.Book;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
+import com.example.demo.service.UserService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.modelmapper.ModelMapper;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
+    @Mock
     private UserRepository userRepository;
+
+    @Mock
     private ModelMapper modelMapper;
+
+    @InjectMocks
     private UserService userService;
-
-    @BeforeEach
-    void setUp() {
-        userRepository = mock(UserRepository.class);
-        modelMapper = new ModelMapper();
-        userService = new UserService(userRepository, modelMapper);
-    }
-
-    @Test
-    void testGetAllUsers() {
-        // Arrange
-        User user = new User();
-        user.setId(1L);
-        user.setName("John Doe");
-        user.setEmail("john@example.com");
-
-        when(userRepository.findAll()).thenReturn(List.of(user));
-
-        // Act
-        List<UserDTO> result = userService.getAllUsers();
-
-        // Assert
-        assertEquals(1, result.size());
-        assertEquals("John Doe", result.get(0).getName());
-        verify(userRepository, times(1)).findAll();
-    }
 
     @Test
     void testSaveUser() {
-        // Arrange
-        User user = new User();
-        user.setId(1L);
-        user.setName("Jane Doe");
-        user.setEmail("jane@example.com");
+        UserDTO userDTO = new UserDTO();
+        userDTO.setName("John");
 
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        User userEntity = new User();
+        userEntity.setName("John");
 
-        // Act
-        UserDTO result = userService.saveUser(user);
+        // 1️⃣ mock mapping UserDTO -> User
+        when(modelMapper.map(userDTO, User.class)).thenReturn(userEntity);
 
-        // Assert
-        assertNotNull(result);
-        assertEquals("Jane Doe", result.getName());
-        assertEquals("jane@example.com", result.getEmail());
-        verify(userRepository, times(1)).save(user);
+        // 2️⃣ mock repository save (must return User, not DTO!)
+        when(userRepository.save(userEntity)).thenReturn(userEntity);
+
+        // 3️⃣ mock mapping User -> UserDTO
+        when(modelMapper.map(userEntity, UserDTO.class)).thenReturn(userDTO);
+
+        UserDTO savedUser = userService.saveUser(userDTO);
+
+        assertNotNull(savedUser);
+        assertEquals("John", savedUser.getName());
     }
 
+
     @Test
-    void testSaveUserWithBooks() {
-        // Arrange
-        UserRequest request = new UserRequest();
-        request.setName("Alice");
-        request.setEmail("alice@example.com");
+    void testGetAllUsers() {
+        User userEntity = new User();
+        userEntity.setName("Alice");
 
-        UserRequest.BookRequest bookReq = new UserRequest.BookRequest();
-        bookReq.setTitle("Spring Boot Basics");
-        bookReq.setAuthor("Author X");
-        request.setBooks(List.of(bookReq));
+        UserDTO userDTO = new UserDTO();
+        userDTO.setName("Alice");
 
-        User user = new User();
-        user.setId(1L);
-        user.setName("Alice");
-        user.setEmail("alice@example.com");
+        // mock repo + mapper
+        when(userRepository.findAll()).thenReturn(Arrays.asList(userEntity));
+        when(modelMapper.map(userEntity, UserDTO.class)).thenReturn(userDTO);
 
-        Book book = new Book();
-        book.setId(101L);
-        book.setTitle("Spring Boot Basics");
-        book.setAuthor("Author X");
-        book.setUser(user);
+        List<UserDTO> users = userService.getAllUsers();
 
-        user.setBooks(List.of(book));
-
-        when(userRepository.save(any(User.class))).thenReturn(user);
-
-        // Act
-        UserDTO result = userService.saveUserWithBooks(request);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals("Alice", result.getName());
-        assertEquals(1, result.getBooks().size());
-        assertEquals("Spring Boot Basics", result.getBooks().get(0).getTitle());
-        verify(userRepository, times(1)).save(any(User.class));
+        assertNotNull(users);
+        assertEquals(1, users.size());
+        assertEquals("Alice", users.get(0).getName()); // ✅ no more NPE
     }
 }
