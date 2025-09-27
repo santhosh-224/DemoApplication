@@ -31,7 +31,7 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .setSubject(username)
-                .setClaims(Map.of("roles", roles))
+                .claim("roles", roles)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -61,5 +61,16 @@ public class JwtUtil {
                 .getBody();
         Object roles = claims.get("roles");
         return roles instanceof List ? (List<String>) roles : List.of();
+    }
+
+    public String extractUsername(String token) {
+        return extractClaims(token).getSubject(); // 👈 will now work
+    }
+
+    private Claims extractClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(key)
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
