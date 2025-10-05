@@ -7,6 +7,7 @@ import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtUtil;
 import com.example.demo.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -53,6 +54,22 @@ public class AuthController {
         user.setRoles("ROLE_USER");
         userRepository.save(user);
         return ResponseEntity.ok("registered");
+    }
+
+    @PostMapping("/register-admin")
+    @Operation(summary = "Register an admin user", description = "Creates a new admin account (for testing)")
+    public ResponseEntity<String> registerAdmin(@RequestBody RegisterRequest registerRequest) {
+        if(userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
+            return  ResponseEntity.badRequest().body("Email already in use");
+        }
+        User user = new User();
+        user.setName(registerRequest.getName());
+        user.setEmail(registerRequest.getEmail());
+        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setRoles("ROLE_ADMIN, ROLE_USER");
+        userRepository.save(user);
+        return ResponseEntity.ok("Admin user registered successfully");
+
     }
 
     @PostMapping("/login")
