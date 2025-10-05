@@ -19,7 +19,8 @@ public class User {
 
     private String password;
 
-    private String roles;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     // One user can have many books
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -58,12 +59,12 @@ public class User {
         this.email = email;
     }
 
-    public String getRoles() {
-        return roles;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoles(String roles) {
-        this.roles = roles;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public String getPassword() {

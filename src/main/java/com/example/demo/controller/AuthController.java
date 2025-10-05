@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.AuthReponse;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
+import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtUtil;
@@ -51,7 +52,7 @@ public class AuthController {
         user.setName(registerRequest.getName());
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setRoles("ROLE_USER");
+        user.setRole(Role.ROLE_USER);
         userRepository.save(user);
         return ResponseEntity.ok("registered");
     }
@@ -66,7 +67,7 @@ public class AuthController {
         user.setName(registerRequest.getName());
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setRoles("ROLE_ADMIN, ROLE_USER");
+        user.setRole(Role.ROLE_ADMIN);
         userRepository.save(user);
         return ResponseEntity.ok("Admin user registered successfully");
 

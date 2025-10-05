@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.RegisterRequest;
+import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,7 +26,7 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
 
         //Default role
-        user.setRoles("ROLE_USER");
+        user.setRole(Role.ROLE_USER);
 
         return userRepository.save(user);
     }
