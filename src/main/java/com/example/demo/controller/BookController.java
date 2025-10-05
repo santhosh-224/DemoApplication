@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,12 +25,14 @@ public class BookController {
 
     //CREATE
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Book> addBook(@Valid @RequestBody Book book) {
         return bookService.addBook(book);
     }
 
     //READ ALL
     @GetMapping
+    @PreAuthorize("hasAnyRole('USER', 'ROLE')")
     public List<Book> getAllBooks() {
         return bookService.getAllBooks();
     }
