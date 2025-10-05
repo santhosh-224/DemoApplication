@@ -44,6 +44,7 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**",
                                 "/api-docs/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         //all other endpoints require authentication
                         .anyRequest().authenticated()
                 )

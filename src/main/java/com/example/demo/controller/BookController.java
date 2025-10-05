@@ -32,7 +32,7 @@ public class BookController {
 
     //READ ALL
     @GetMapping
-    @PreAuthorize("hasAnyRole('USER', 'ROLE')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public List<Book> getAllBooks() {
         return bookService.getAllBooks();
     }
