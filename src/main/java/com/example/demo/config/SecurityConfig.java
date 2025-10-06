@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/auth/register",
+                                "auth/register-admin",
                                 "/auth/login",
                                 "/api/health").permitAll()      //allow register
                         .requestMatchers("/books/**").hasAnyRole("USER", "ADMIN")       //require jwt
