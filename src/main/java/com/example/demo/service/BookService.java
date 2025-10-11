@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -71,6 +70,24 @@ public class BookService {
     public Page<BookDTO> searchBooksByTitle(String title, Pageable pageable) {
         Page<Book> books;
         books = bookRepository.findByTitleContainingIgnoringCase(title, pageable);
+        return books.map(book -> modelMapper.map(book, BookDTO.class));
+    }
+
+    public Page<BookDTO> getBooks(String title, String author, Integer year, Pageable pageable) {
+        Page<Book> books;
+
+        if(author != null && year != null) {
+            books = bookRepository.findByAuthorIgnoreCaseAndYear(author, year, pageable);
+        } else if (author != null) {
+            books = bookRepository.findByAuthorIgnoreCase(author, pageable);
+        } else if (year != null) {
+            books = bookRepository.findByYear(year, pageable);
+        } else if (title != null) {
+            books = bookRepository.findByTitleContainingIgnoringCase(title, pageable);
+        }else {
+            books = bookRepository.findAll(pageable);
+        }
+
         return books.map(book -> modelMapper.map(book, BookDTO.class));
     }
 }

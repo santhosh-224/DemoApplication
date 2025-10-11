@@ -79,4 +79,12 @@ public class BookController {
             return bookService.searchBooksByTitle(title, pageable);
         return bookService.getAllBooks(pageable);
     }
+
+    @GetMapping
+    public Page<BookDTO> getBooks(@RequestParam(required = false) String title,
+                                  @RequestParam(required = false) String author,
+                                  @RequestParam(required = false) Integer year,
+                                  Pageable pageable) {
+        return bookService.getBooks(title, author, year, pageable);
+    }
 }
