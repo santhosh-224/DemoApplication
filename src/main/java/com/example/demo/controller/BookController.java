@@ -33,13 +33,6 @@ public class BookController {
         return bookService.addBook(book);
     }
 
-    //READ ALL
-    @GetMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public Page<BookDTO> getAllBooks(Pageable pageable) {
-        return bookService.getAllBooks(pageable);
-    }
-
     //READ ONE
     @GetMapping("/{id}")
     public Book getBookById(@PathVariable Long id) {
@@ -81,6 +74,7 @@ public class BookController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Page<BookDTO> getBooks(@RequestParam(required = false) String title,
                                   @RequestParam(required = false) String author,
                                   @RequestParam(required = false) Integer year,
