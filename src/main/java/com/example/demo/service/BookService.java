@@ -1,10 +1,12 @@
 package com.example.demo.service;
 
-import com.example.demo.controller.BookController;
+
 import com.example.demo.dto.BookDTO;
 import com.example.demo.entity.Book;
 import com.example.demo.repository.BookRepository;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +19,7 @@ import java.util.List;
 public class BookService {
     private final BookRepository bookRepository;
     private final ModelMapper modelMapper;
+    private static final Logger log = LoggerFactory.getLogger(BookService.class);
 
     @Autowired
     public BookService(BookRepository bookRepository, ModelMapper modelMapper) {
@@ -25,7 +28,15 @@ public class BookService {
     }
 
     public List<Book> getBooksByAuthor(String author) {
-        return bookRepository.findByAuthor(author);
+        log.info("Fetching books by author: {}", author);
+        try{
+            List <Book> books = bookRepository.findByAuthor(author);
+            log.debug("Found {} books by author: {}", books.size(), author);
+            return books;
+        }catch (Exception e) {
+            log.error("Error fetching books by author: {}", author, e);
+            throw e;
+        }
     }
 
     public List<Book> getBooksByTitleLength(int len) {

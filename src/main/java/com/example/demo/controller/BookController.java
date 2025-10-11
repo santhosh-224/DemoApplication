@@ -5,6 +5,8 @@ import com.example.demo.entity.Book;
 import com.example.demo.service.BookService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +23,8 @@ public class BookController {
 
     private final BookService bookService;
 
+    private static final Logger log = LoggerFactory.getLogger(BookController.class);
+
     @Autowired
     public BookController (BookService bookService) {
         this.bookService = bookService;
@@ -36,7 +40,10 @@ public class BookController {
     //READ ONE
     @GetMapping("/{id}")
     public Book getBookById(@PathVariable Long id) {
-        return bookService.getBookById(id);
+        log.info("GET /books/{} request received", id);
+        Book book = bookService.getBookById(id);
+        log.info("Returning book {} for id: {}", book.getTitle(), id);
+        return book;
     }
 
     //UPDATE
